@@ -120,7 +120,39 @@ The application is deployed on Vercel.
 
 > Health Check: https://dev-ops-mid-term.vercel.app/health
 
-Screenshots
+## Workflow Diagram
+```mermaid
+flowchart TD
+    A[Developer writes code] --> B[Push to GitHub]
+    B --> C{Branch?}
+
+    C -->|dev| D[Build]
+    C -->|main| D
+    C -->|Pull Request| D
+
+    D --> E[Install dependencies]
+    E --> F[Check Python syntax]
+    F --> G[Run automated tests with Pytest]
+
+    G --> H{Tests passed?}
+    H -->|No| I[Pipeline Failed]
+    H -->|Yes| J{Push to main?}
+
+    J -->|No| K[CI Completed]
+    J -->|Yes| L[Increment project version]
+
+    L --> M[Build with Vercel]
+    M --> N[Deploy to Vercel]
+    N --> O[Production Fibonacci API]
+
+    O --> P[Run monitoring script]
+    P --> Q[Check /health every 30 seconds]
+    Q --> R[Log results to monitor.log]
+
+
+```
+
+## Screenshots
 
 1. Successful CI/CD Pipeline
 ![pipelines.png](screenshots/pipelines.png)
