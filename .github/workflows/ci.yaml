@@ -104,6 +104,56 @@ jobs:
       - name: Deploy to Vercel
         run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
 
+      - name: Health Check
+        id: health_check
+        run: |
+          HEALTH_URL="https://dev-ops-mid-term.vercel.app/health"
+          
+          for attempt in {1..10}; do
+            echo "Health check attempt $attempt/10"
+          
+            if curl -fsS "$HEALTH_URL" | grep -q '"status":"healthy"'; then
+              echo "Health check passed!"
+              exit 0
+            fi
+          
+            echo "Health check failed. Retrying in 5 seconds..."
+            sleep 5
+          done
+          
+          echo "Health check failed after 10 attempts."
+          exit 1
+
+      - name: Automatic Rollback
+        id: rollback
+        if: failure() && steps.health_check.outcome == 'failure'
+        run: |
+          echo "Health check failed. Rolling back..."
+          
+          vercel rollback --token="$VERCEL_TOKEN"
+          
+          echo "Rollback command executed."
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+
+      - name: Verify Rollback
+        if: failure() && steps.health_check.outcome == 'failure' && steps.rollback.outcome == 'success'
+        run: |
+          echo "Verifying previous deployment..."
+          
+          for attempt in {1..10}; do
+            if curl -fsS "https://dev-ops-mid-term.vercel.app/health" | grep -q '"status":"healthy"'; then
+              echo "Rollback successful! Previous deployment is healthy."
+              exit 0
+            fi
+          
+            echo "Waiting for rollback..."
+            sleep 5
+          done
+          
+          echo "Rollback verification failed."
+          exit 1
+
       - name: Commit version update
         run: |
           git config user.name "github-actions[bot]"
