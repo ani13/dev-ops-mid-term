@@ -110,6 +110,12 @@ Production Health Check URL:
 > https://dev-ops-mid-term.vercel.app/health
 
 
+## Automated Rollback
+
+The CI/CD pipeline includes an automated rollback mechanism. After each production deployment a health check is performed and in case of fail, 
+GitHub Actions automatically executes the Vercel rollback command to restore the previous deployment.
+
+
 ## Production Deployment
 
 The application is deployed on Vercel.
