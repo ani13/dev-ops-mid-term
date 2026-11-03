@@ -127,6 +127,7 @@ jobs:
           exit 1
 
       - name: Link Vercel Project
+        if: always() && steps.health_check.outcome == 'failure'
         run: |
           vercel link --yes \
             --project="$VERCEL_PROJECT_ID" \
