@@ -2,7 +2,7 @@ import time
 import logging
 import httpx
 
-HEALTH_URL = "http://127.0.0.1:8000/health"
+HEALTH_URL = "https://dev-ops-mid-term.vercel.app/health"
 
 logging.basicConfig(
     filename="monitor.log",
