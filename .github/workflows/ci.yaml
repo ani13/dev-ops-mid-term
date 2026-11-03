@@ -126,14 +126,11 @@ jobs:
           echo "Health check failed after 10 attempts."
           exit 1
 
-      - name: Link Vercel Project
+      - name: Prepare Vercel Project
         if: always() && steps.health_check.outcome == 'failure'
         run: |
-          vercel link --yes \
-            --project="$VERCEL_PROJECT_ID" \
-            --token="$VERCEL_TOKEN"
-        env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          rm -rf .vercel
+          echo "Removed stale Vercel configuration."
 
       - name: Automatic Rollback
         id: rollback
@@ -141,7 +138,7 @@ jobs:
         run: |
           echo "Health check failed. Rolling back..."
         
-          vercel rollback --token="$VERCEL_TOKEN"
+          vercel rollback --timeout 0 --token="$VERCEL_TOKEN"
           
           echo "Rollback command executed."
         env:
