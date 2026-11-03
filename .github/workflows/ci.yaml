@@ -129,8 +129,7 @@ jobs:
       - name: Prepare Vercel Project
         if: always() && steps.health_check.outcome == 'failure'
         run: |
-          rm -rf .vercel
-          echo "Removed stale Vercel configuration."
+          vercel pull --yes --environment=production --token="${{ secrets.VERCEL_TOKEN }}"
 
       - name: Automatic Rollback
         id: rollback
