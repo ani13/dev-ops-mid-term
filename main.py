@@ -20,3 +20,10 @@ def get_fibonacci(n: int):
         "n": n,
         "result": fibonacci(n)
     }
+
+
+@app.get("/health")
+def health_check():
+    return {
+        "status": "healthy"
+    }
