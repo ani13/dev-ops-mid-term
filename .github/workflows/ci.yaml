@@ -107,6 +107,8 @@ jobs:
       - name: Health Check
         id: health_check
         run: |
+          exit 1  # TEMPORARY TEST
+          
           HEALTH_URL="https://dev-ops-mid-term.vercel.app/health"
           
           for attempt in {1..10}; do
